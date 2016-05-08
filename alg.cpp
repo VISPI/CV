@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "SimpleGPIO.h"
+#include "SimpleGPIO.cpp"
 
 using namespace cv;
 using namespace std;
@@ -33,11 +35,15 @@ void thresh_contour(int, void*);
 void opening(int, void*);
 void intToBin(bool*, int);
 
+const int GPIO_LED = 57;
+
 
 
 ////////////////////////////////BEGIN MAIN/////////////////////////////
 int main()
 {
+gpio_export(GPIO_LED);
+gpio_set_dir(GPIO_LED, OUTPUT_PIN);
 //Coordinate Initialization
 _x1 = (bool*) calloc (10,sizeof(bool));
 _y1 = (bool*) calloc (10,sizeof(bool));
@@ -59,10 +65,15 @@ char* blur_window = "Blur";
 //createTrackbar( "Element:\n 0:Rect | 1:Cross | 2:Ellipse","Opening",&morph_elem, max_elem, opening);
 //createTrackbar( "Kernel size:\n 2n+1", "Opening", &morph_size, max_kernel_size, opening );
 
+double t1 = (double)getTickCount();
 opening(0,0);
 thresh_contour(0,0);
+double t2 = (double)getTickCount();
+
+double time = (t2 - t1)/getTickFrequency();
+cout << "\nTime is: " << time << "\n";
 //imshow(window_name, overlay);
-waitKey(0);
+//waitKey(0);
 
 return(0);
 }
@@ -175,10 +186,12 @@ cout << "End of Binary";
 //cout << dp << '\n' << '\n';
 
 //Show in window
+/*
 namedWindow("Contours", CV_WINDOW_AUTOSIZE);
 imshow("Contours",drawing);
 namedWindow("Overlay", CV_WINDOW_AUTOSIZE);
 imshow("Overlay", src_gray);
+*/
 }
 
 /////////////////////////BEGIN FUNCTION//////////////////////////////
